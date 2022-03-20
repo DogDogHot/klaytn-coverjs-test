@@ -1,0 +1,5 @@
+# 비밀키 관리
+src/config/secretKey.json
+
+# node_modules
+node_modules
