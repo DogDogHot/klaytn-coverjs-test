@@ -24,7 +24,49 @@ const generateKeyring = async (req, res, next) => {
   }
 };
 
+const getBalance = async (req, res, next) => {
+  const { walletKey } = req.query;
+  try {
+    const balance = await caver.klay.getBalance(walletKey);
+
+    res.json({
+      code: 2000,
+      data: { balance: caver.utils.fromPeb(balance, "KLAY") },
+      msg: "get wallet balance",
+    });
+  } catch (e) {
+    res.status(500).json({ code: 5000, msg: "klaytn error" });
+  }
+};
+
+const sendBalance = async (req, res, next) => {
+  const { address } = req.body;
+
+  try {
+    let response = await caver.klay.sendTransaction({
+      type: "VALUE_TRANSFER",
+      from: account.address,
+      to: address,
+      gas: "21000",
+      value: caver.utils.toPeb("1", "KLAY"),
+    });
+    console.log(response);
+    res.json({
+      code: 2000,
+      msg: "post wallet balance",
+    });
+  } catch (e) {
+    console.log(e);
+    res.code(400).json({
+      code: 4000,
+      msg: "fail post wallet balance",
+    });
+  }
+};
+
 module.exports = {
   getKlaytnVersion,
   generateKeyring,
+  getBalance,
+  sendBalance,
 };
